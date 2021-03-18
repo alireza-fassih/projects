@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="create-user-table" author="alireza-fassih">
+        <createTable tableName="DASH_USER">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="USER_NAME" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="PASSWORD" type="VARCHAR(255)"/>
+            <column name="ROLES" type="VARCHAR(255)"/>
+            <column name="INFO" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="alireza.fassih" id="add-admin-user">
+        <insert tableName="DASH_USER">
+            <column name="USER_NAME" value="root"/>
+            <column name="PASSWORD"
+                    value="$2a$10$Vezo7p7ulOfDM0mOIHoqIeABvXes/E2j9Ru/zlGXpEIJRw1bmjlry"/> <!-- root1234 -->
+            <column name="ROLES" value="PROGRAMMER,ADMIN,USER"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="create-rawMaterialCategory-table" author="alireza-fassih">
+        <createTable tableName="DASH_RAW_MATERIAL_CATEGORY">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="DELETED" type="BOOL"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-rawMaterial-table" author="alireza-fassih">
+        <createTable tableName="DASH_RAW_MATERIAL">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(255)" />
+            <column name="DELETED" type="BOOL"/>
+            <column name="UNIT_PRICE" type="BIGINT"/>
+            <column name="CREATE_DATE" type="DATE"/>
+            <column name="LAST_MODIFICATION_DATE" type="DATE"/>
+            <column name="CATEGORY" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="change-rawMaterial-dateColumn" author="alireza-fassih">
+        <modifyDataType tableName="DASH_RAW_MATERIAL" columnName="CREATE_DATE" newDataType="TIMESTAMP" />
+        <modifyDataType tableName="DASH_RAW_MATERIAL" columnName="LAST_MODIFICATION_DATE" newDataType="TIMESTAMP" />
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="addMaterial-to-materialCategoryFK">
+        <addForeignKeyConstraint baseColumnNames="CATEGORY"
+                                 baseTableName="DASH_RAW_MATERIAL"
+                                 constraintName="fk-rawMaterial-category"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_RAW_MATERIAL_CATEGORY"/>
+    </changeSet>
+
+    <changeSet id="create-goodsCategory-table" author="alireza-fassih">
+        <createTable tableName="DASH_GOODS_CATEGORY">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="DELETED" type="BOOL"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-goods-table" author="alireza-fassih">
+        <createTable tableName="DASH_GOODS">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(255)" />
+            <column name="DELETED" type="BOOL"/>
+            <column name="CREATE_DATE" type="DATE"/>
+            <column name="LAST_MODIFICATION_DATE" type="DATE"/>
+            <column name="CATEGORY" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="change-goods-dateColumn" author="alireza-fassih">
+        <modifyDataType tableName="DASH_GOODS" columnName="CREATE_DATE" newDataType="TIMESTAMP" />
+        <modifyDataType tableName="DASH_GOODS" columnName="LAST_MODIFICATION_DATE" newDataType="TIMESTAMP" />
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="addGoods-to-goodsCategoryFK">
+        <addForeignKeyConstraint baseColumnNames="CATEGORY"
+                                 baseTableName="DASH_GOODS"
+                                 constraintName="fk-goods-goodsCategory"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_GOODS_CATEGORY"/>
+    </changeSet>
+
+    <changeSet id="create-goodsRawMaterial-table" author="alireza-fassih">
+        <createTable tableName="DASH_GOODS_RAW_MATERIAL">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="SELECT_ABLE" type="BOOL"/>
+            <column name="MATERIAL" type="BIGINT"/>
+            <column name="GOODS" type="BIGINT"/>
+            <column name="CATEGORY" type="BIGINT"/>
+            <column name="IMPORT_FACTOR" type="FLOAT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-deleted-toGoodsRawMaterial" author="alireza.fasish">
+        <addColumn tableName="DASH_GOODS_RAW_MATERIAL">
+            <column name="deleted" type="BOOL" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="addGoodsRM-to-Goods-FK">
+        <addForeignKeyConstraint baseColumnNames="GOODS"
+                                 baseTableName="DASH_GOODS_RAW_MATERIAL"
+                                 constraintName="fk-goodsRM-Goods"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_GOODS"/>
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="addGoodsRM-to-goodsCategoryFK">
+        <addForeignKeyConstraint baseColumnNames="CATEGORY"
+                                 baseTableName="DASH_GOODS_RAW_MATERIAL"
+                                 constraintName="fk-goodsRM-goodsCategory"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_GOODS_CATEGORY"/>
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="addGoodsRM-to-RM-FK">
+        <addForeignKeyConstraint baseColumnNames="MATERIAL"
+                                 baseTableName="DASH_GOODS_RAW_MATERIAL"
+                                 constraintName="fk-goodsRM-RawMaterial"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_RAW_MATERIAL"/>
+    </changeSet>
+
+    <changeSet id="add-title-GRM-table" author="alireza-fassih">
+        <addColumn tableName="DASH_GOODS_RAW_MATERIAL">
+            <column name="TITLE" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="create-order-table" author="alireza-fassih">
+        <createTable tableName="DASH_ORDER">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="GOODS" type="BIGINT"/>
+            <column name="COST" type="VARCHAR(255)"/>
+            <column name="CREATOR" type="BIGINT"/>
+            <column name="CREATE_DATE" type="DATE"/>
+            <column name="LAST_MODIFICATION_DATE" type="DATE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="change-order-dateColumn" author="alireza-fassih">
+        <modifyDataType tableName="DASH_ORDER" columnName="CREATE_DATE" newDataType="TIMESTAMP" />
+        <modifyDataType tableName="DASH_ORDER" columnName="LAST_MODIFICATION_DATE" newDataType="TIMESTAMP" />
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="addorder-to-userFK">
+        <addForeignKeyConstraint baseColumnNames="CREATOR"
+                                 baseTableName="DASH_ORDER"
+                                 constraintName="fk-creator-user"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_USER"/>
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="addOrder-to-goods-FK">
+        <addForeignKeyConstraint baseColumnNames="GOODS"
+                                 baseTableName="DASH_ORDER"
+                                 constraintName="fk-order-goods"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_GOODS"/>
+    </changeSet>
+
+    <changeSet id="create-orderItem-table" author="alireza-fassih">
+        <createTable tableName="DASH_ORDER_ITEM">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ORDER_ID" type="BIGINT"/>
+            <column name="RAW_MATERIAL" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="add_orderItem-to-orderFK">
+        <addForeignKeyConstraint baseColumnNames="ORDER_ID"
+                                 baseTableName="DASH_ORDER_ITEM"
+                                 constraintName="fk-orderItem-order"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_ORDER"/>
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="add-orderItem-to-RM-FK">
+        <addForeignKeyConstraint baseColumnNames="RAW_MATERIAL"
+                                 baseTableName="DASH_ORDER_ITEM"
+                                 constraintName="fk-orderItem-RM"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_RAW_MATERIAL"/>
+    </changeSet>
+
+    <changeSet id="add-metadata-column-order-item" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER_ITEM">
+            <column name="GOODS_RAW_MATERIAL" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="add-orderItem-to-GRMMetadata-FK">
+        <addForeignKeyConstraint baseColumnNames="GOODS_RAW_MATERIAL"
+                                 baseTableName="DASH_ORDER_ITEM"
+                                 constraintName="fk-orderItem-GRMMetadata"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_GOODS_RAW_MATERIAL"/>
+    </changeSet>
+
+    <changeSet id="add-title-column-order-item" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER_ITEM">
+            <column name="TITLE" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-price-column-order-item" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER_ITEM">
+            <column name="PRICE" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="drop-price-column-order" author="alireza-fassih">
+        <dropColumn tableName="DASH_ORDER" columnName="COST" />
+    </changeSet>
+
+    <changeSet id="add-title-column-order" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER">
+            <column name="TITLE" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="create-orderState-table" author="alireza-fassih">
+        <createTable tableName="DASH_ORDER_STATE">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="PARENT" type="BIGINT" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-deleted-to-orderState" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER_STATE">
+            <column name="DELETED" type="BOOL" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="add-orderState-to-orderState-FK">
+        <addForeignKeyConstraint baseColumnNames="PARENT"
+                                 baseTableName="DASH_ORDER_STATE"
+                                 constraintName="fk-orderState-to-orderState"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_ORDER_STATE"/>
+    </changeSet>
+
+    <changeSet id="drop-fk-fk-goodsRM-goodsCategory" author="alireza.fassih">
+        <dropForeignKeyConstraint baseTableName="DASH_GOODS_RAW_MATERIAL"
+                                  constraintName="fk-goodsRM-goodsCategory" />
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="addGoodsRM-to-goodsCategory-newFK">
+        <addForeignKeyConstraint baseColumnNames="CATEGORY"
+                                 baseTableName="DASH_GOODS_RAW_MATERIAL"
+                                 constraintName="fk-goodsRM-goodsCategory-new"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_RAW_MATERIAL_CATEGORY"/>
+    </changeSet>
+
+    <changeSet id="add-startStateToGoods" author="alireza-fassih">
+        <addColumn tableName="DASH_GOODS">
+            <column name="FIRST_STATE" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="alireza-fassih" id="addGoodsFirstState-to-OrderStateFK">
+        <addForeignKeyConstraint baseColumnNames="FIRST_STATE"
+                                 baseTableName="DASH_GOODS"
+                                 constraintName="fk-goods-orderState"
+                                 referencedColumnNames="ID"
+                                 referencedTableName="DASH_ORDER_STATE"/>
+    </changeSet>
+
+    <changeSet id="create-orderToState-table" author="alireza-fassih">
+        <createTable tableName="DASH_ORDER_TO_STATE">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ORDER_ID" type="BIGINT" >
+                <constraints foreignKeyName="fk-orderToOrderState"
+                             referencedColumnNames="ID" referencedTableName="DASH_ORDER" />
+            </column>
+            <column name="ORDER_STATE_TITLE" type="VARCHAR(255)" />
+            <column name="CREATE_DATE" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="change-orderToState-dateColumn" author="alireza-fassih">
+        <modifyDataType tableName="DASH_ORDER_TO_STATE" columnName="CREATE_DATE" newDataType="TIMESTAMP" />
+    </changeSet>
+
+    <changeSet id="stateofOrder-dropTitle" author="alireza-fassih">
+        <dropColumn tableName="DASH_ORDER_TO_STATE" columnName="ORDER_STATE_TITLE"/>
+    </changeSet>
+
+    <changeSet id="add-orderStateToStateOfOrder" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER_TO_STATE">
+            <column name="STATE_ID" type="BIGINT">
+                <constraints foreignKeyName="fk-stateOfOrderToState"
+                             referencedTableName="DASH_ORDER_STATE" referencedColumnNames="ID" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-lastStateIdToOrder" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER">
+            <column name="CURRENT_STATE_ID" type="BIGINT">
+                <constraints foreignKeyName="fk-currentStateOfOrderToState"
+                             referencedTableName="DASH_ORDER_STATE" referencedColumnNames="ID" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="create-priceList-table" author="alireza-fassih">
+        <createTable tableName="DASH_PRICE_LIST">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CONTENT" type="BLOB" />
+            <column name="CREATE_DATE" type="DATE"/>
+            <column name="LAST_MODIFICATION_DATE" type="DATE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-notifications-table" author="alireza-fassih">
+        <createTable tableName="DASH_NOTIFICATIONS">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CONTENT" type="TEXT" />
+            <column name="CREATE_DATE" type="DATE"/>
+            <column name="LAST_MODIFICATION_DATE" type="DATE"/>
+            <column name="DELETED" type="BOOL"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="drop-orderitem-order-fk" author="alireza-fassih">
+        <dropForeignKeyConstraint
+                baseTableName="DASH_ORDER_ITEM"
+                constraintName="fk-orderItem-order" />
+    </changeSet>
+
+    <changeSet id="drop-fk-order-goods" author="alireza-fassih">
+        <dropForeignKeyConstraint baseTableName="DASH_ORDER"
+                                  constraintName="fk-order-goods" />
+    </changeSet>
+
+    <changeSet id="drop-order-id-column" author="alireza-fassih">
+        <dropColumn tableName="DASH_ORDER_ITEM" columnName="ORDER_ID" />
+        <dropColumn tableName="DASH_ORDER" columnName="GOODS" />
+    </changeSet>
+
+    <changeSet id="create-orderGoods-table" author="alireza-fassih">
+        <createTable tableName="DASH_ORDER_GOODS">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ORDER_ID" type="BIGINT">
+                <constraints foreignKeyName="fk-orderGoods-order" referencedTableName="DASH_ORDER" referencedColumnNames="ID" />
+            </column>
+            <column name="ITEM_COUNT" type="BIGINT"/>
+            <column name="GOODS" type="BIGINT">
+                <constraints foreignKeyName="fk-orderGoods-goods" referencedColumnNames="ID" referencedTableName="DASH_GOODS" />
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="add-orderGoodsCol-orderItem" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER_ITEM" >
+            <column name="ORDER_GOODS" type="BIGINT">
+                <constraints foreignKeyName="fk-orderItem-orderGoods" referencedColumnNames="ID" referencedTableName="DASH_ORDER_GOODS" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="drop-title-from-order" author="alireza-fassih">
+        <dropColumn tableName="DASH_ORDER" columnName="TITLE" />
+    </changeSet>
+
+    <changeSet id="add-prisePercentage-user" author="alireza-fassih">
+        <addColumn tableName="DASH_USER">
+            <column name="PRISE_PERCENT" type="FLOAT"/>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="add-description-on-order" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER">
+            <column name="DESCRIPTION" type="TEXT" />
+        </addColumn>
+    </changeSet>
+
+    <!-- START NEW CODES -->
+
+    <changeSet id="add-system-state-to-orderState" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER_STATE">
+            <column name="CODE" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-system-state" author="alireza-fassih">
+        <insert tableName="DASH_ORDER_STATE">
+            <column name="TITLE"   value="ثبت سفارش"/>
+            <column name="CODE"    value="REGISTRATION"/>
+            <column name="DELETED"  valueBoolean="false" />
+        </insert>
+
+        <insert tableName="DASH_ORDER_STATE">
+            <column name="TITLE"   value="تایید سفارش"/>
+            <column name="CODE"    value="ACCEPTED"/>
+            <column name="DELETED" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="DASH_ORDER_STATE">
+            <column name="TITLE"   value="رد سفارش"/>
+            <column name="CODE"    value="REJECTED"/>
+            <column name="DELETED" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="add-EXTRA_DESCRIPTION-order" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER">
+            <column name="EXTRA_DESCRIPTION" type="TEXT" />
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="add-discount-To-order" author="alireza-fassih">
+        <addColumn tableName="DASH_ORDER">
+            <column name="DISCOUNT" type="BIGINT" >
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="add-allowDiscount-on-rawcategory" author="alireza.fassih">
+        <addColumn tableName="DASH_RAW_MATERIAL_CATEGORY">
+            <column name="ALLOW_DISCOUNT" type="BOOL" />
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="addTitleToPriceList" author="alireza-fassih">
+       <addColumn tableName="DASH_PRICE_LIST">
+           <column name="TITLE" type="VARCHAR(255)" />
+       </addColumn>
+    </changeSet>
+
+
+    <changeSet id="add-PriceListToUser" author="alireza-fassih">
+        <addColumn tableName="DASH_USER">
+            <column name="PRICE_LIST" type="BIGINT">
+                <constraints referencedTableName="DASH_PRICE_LIST"
+                     referencedColumnNames="ID"  foreignKeyName="FL_USER_PRICE_LIST"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="change-content-type" author="alireza-fassih">
+        <dropColumn tableName="DASH_PRICE_LIST" columnName="CONTENT" />
+        <addColumn tableName="DASH_PRICE_LIST">
+            <column name="CONTENT" type="MEDIUMBLOB"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-Color-To-DASH_ORDER_STATE" author="alireza.fassih">
+        <addColumn tableName="DASH_ORDER_STATE">
+            <column name="COLOR" type="VARCHAR(20)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-width-to-goods" author="alireza.fassih">
+        <addColumn tableName="DASH_GOODS">
+            <column name="WIDTH" type="FLOAT" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-unit-order" author="alireza.fassih">
+        <addColumn tableName="DASH_ORDER">
+            <column name="UNIT" type="FLOAT" />
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

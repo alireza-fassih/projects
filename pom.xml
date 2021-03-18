@@ -6,11 +6,12 @@
 
   <groupId>ir.fassih</groupId>
   <artifactId>projects</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
   <name>projects</name>
 
   <properties>
+    <revision>1.0.0-SNAPSHOT</revision>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -24,6 +25,11 @@
     <maven-site-plugin.version>3.7.1</maven-site-plugin.version>
     <maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
   </properties>
+
+
+  <modules>
+    <module>workshop-automation</module>
+  </modules>
 
   <build>
     <pluginManagement>
