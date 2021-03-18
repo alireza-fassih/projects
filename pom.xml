@@ -29,6 +29,7 @@
 
   <modules>
     <module>workshop-automation</module>
+    <module>cert-manager</module>
   </modules>
 
   <build>

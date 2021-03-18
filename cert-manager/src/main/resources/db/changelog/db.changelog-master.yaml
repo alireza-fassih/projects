@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id:  adding.usertable
+      author:  alireza.fassih
+      changes:
+        - createTable:
+            tableName:  CERT_USER
+            columns:
+              - column:
+                  name:  ID
+                  type:  int
+                  autoIncrement:  true
+                  constraints:
+                    primaryKey:  true
+                    nullable:  false
+              - column:
+                  name:  USERNAME
+                  type:  varchar(255)
+              - column:
+                  name:  PASSWORD
+                  type:  varchar(255)
+                  constraints:
+                    nullable:  false
+  - changeSet:
+      id: inserting root user
+      author: alireza.fassih
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: USERNAME
+                  value: root
+              - column:
+                  name: PASSWORD
+                  value: $2a$04$t4smKHHhhFOrasYoYjTm4uuc0hy1o1SYqZkz9cMFPC6wttmkETFim
+            tableName:  CERT_USER
+  - changeSet:
+      id: creating cert table
+      author: alireza.fassih
+      changes:
+        - createTable:
+            tableName:  CERT_CERTES
+            columns:
+                - column:
+                    name:  ID
+                    type:  int
+                    autoIncrement:  true
+                    constraints:
+                      primaryKey:  true
+                      nullable:  false
+                - column:
+                    name:  CODE
+                    type:  varchar(255)
+                    constraints:
+                      nullable:  false
+                      unique: true
+                - column:
+                    name:  IMG_DATA
+                    type:  BLOB
+                    constraints:
+                      nullable:  false
