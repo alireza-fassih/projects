@@ -10,17 +10,11 @@
     <description>workshop-automation</description>
 
     <parent>
-        <artifactId>projects</artifactId>
         <groupId>ir.fassih</groupId>
+        <artifactId>spring-boot-2.1.x-parent</artifactId>
         <version>${revision}</version>
+        <relativePath>../parents/spring-boot-2.1.x-parent/pom.xml</relativePath>
     </parent>
-
-<!--    <parent>-->
-<!--        <groupId>org.springframework.boot</groupId>-->
-<!--        <artifactId>spring-boot-starter-parent</artifactId>-->
-<!--        <version>2.1.3.RELEASE</version>-->
-<!--        <relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
-<!--    </parent>-->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,18 +22,6 @@
         <java.version>1.8</java.version>
         <thin.luncher.version>1.0.21.RELEASE</thin.luncher.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.1.3.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -59,12 +41,18 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>ir.fassih</groupId>
+            <artifactId>user-management-starter-spring2.1.x</artifactId>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>4.0.0</version>
         </dependency>
+
 
 
         <dependency>
@@ -105,9 +93,17 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
 
 
 </project>
